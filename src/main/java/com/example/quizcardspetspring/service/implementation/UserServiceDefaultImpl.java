@@ -29,16 +29,12 @@ public class UserServiceDefaultImpl implements UserService {
         return new ResponseEntity<>(this.userRepository.save(user).getId(), HttpStatus.CREATED);
     }
 
-    public UserDetailsService userDetailsService() {
-        return this::getUserByUsername;
+    public User saveUser(User user) {
+        return this.userRepository.save(user);
     }
 
-    public User getUserByUsername(String username) {
-        return this.userRepository.findByUsername(username).orElseThrow(
-                () -> new UserAlreadyExistException(
-                        HttpStatus.CONFLICT,
-                        "User with name: %s already exists".formatted(username))
-        );
+    public UserDetailsService userDetailsService() {
+        return this::getUserByEmail;
     }
 
     @Override

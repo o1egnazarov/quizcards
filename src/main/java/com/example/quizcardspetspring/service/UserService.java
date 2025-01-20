@@ -9,6 +9,8 @@ import java.util.Optional;
 public interface UserService {
     ResponseEntity<Long> createUser(User user);
 
+    User saveUser(User user);
+
     ResponseEntity<Iterable<User>> getUsers();
 
     ResponseEntity<User> getUserById(Long id);
@@ -16,6 +18,6 @@ public interface UserService {
     ResponseEntity<User> deleteUserById(Long id);
 
     UserDetailsService userDetailsService();
-    User getUserByUsername(String username);
+
     User getUserByEmail(String email);
 }

@@ -1,6 +1,7 @@
 package com.example.quizcardspetspring.controller;
 
 import com.example.quizcardspetspring.dto.JwtAuthenticationResponse;
+import com.example.quizcardspetspring.dto.SignInRequest;
 import com.example.quizcardspetspring.dto.SignUpRequest;
 import com.example.quizcardspetspring.dto.VerifyRequest;
 import com.example.quizcardspetspring.entity.User;
@@ -24,12 +25,13 @@ public class AuthenticationController {
     @PostMapping("/signUp")
     public ResponseEntity<User> signUp(@RequestBody SignUpRequest request) {
         final User user = this.authenticationServiceJwtImpl.signUp(request);
+        System.out.println(user);
         return user != null ? ResponseEntity.ok(user) : ResponseEntity.notFound().build();
     }
 
     @PostMapping("/signIn")
-    public ResponseEntity<JwtAuthenticationResponse> signIn(@RequestBody SignUpRequest request) {
-        final User user = this.authenticationServiceJwtImpl.signUp(request);
+    public ResponseEntity<JwtAuthenticationResponse> signIn(@RequestBody SignInRequest request) {
+        final User user = this.authenticationServiceJwtImpl.signIn(request);
         String jwtToken = this.jwtService.generateToken(user);
         return ResponseEntity.ok().body(new JwtAuthenticationResponse(jwtToken));
     }

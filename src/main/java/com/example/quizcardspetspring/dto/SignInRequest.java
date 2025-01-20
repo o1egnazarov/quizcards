@@ -1,5 +1,6 @@
 package com.example.quizcardspetspring.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -12,8 +13,8 @@ import lombok.Getter;
 public class SignInRequest {
 
     @NotBlank
-    @Size(min = 4)
-    private String username;
+    @Email
+    private String email;
 
     @NotEmpty
     private String password;
