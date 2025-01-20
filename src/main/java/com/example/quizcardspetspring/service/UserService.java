@@ -7,15 +7,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import java.util.Optional;
 
 public interface UserService {
-    ResponseEntity<Long> createUser(User user);
-
     User saveUser(User user);
 
-    ResponseEntity<Iterable<User>> getUsers();
+    Iterable<User> getUsers();
 
-    ResponseEntity<User> getUserById(Long id);
+    User getUserById(Long id);
 
-    ResponseEntity<User> deleteUserById(Long id);
+    User deleteUserById(Long id);
 
     UserDetailsService userDetailsService();
 
