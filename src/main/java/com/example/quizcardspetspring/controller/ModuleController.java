@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ModuleController {
     private final ModuleService moduleService;
-    private final UserService userService;
 
     @PostMapping("/start")
     public ResponseEntity<Module> createOfListCards(@RequestParam("userId") Long userID,

@@ -8,7 +8,6 @@ import com.example.quizcardspetspring.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
@@ -27,36 +26,29 @@ public class UserServiceDefaultImpl implements UserService {
             );
         }
 
-        if (this.userRepository.existsByEmail(user.getEmail())) {
-            throw new UserAlreadyExistException(
-                    HttpStatus.CONFLICT,
-                    "User with email: %s already exists".formatted(user.getEmail())
-            );
-        }
-
         return new ResponseEntity<>(this.userRepository.save(user).getId(), HttpStatus.CREATED);
     }
 
-    public User getUserByUsername(String username) {
-        return this.userRepository
-                .findByUsername(username)
-                .orElseThrow(() -> new UserAlreadyExistException(
-                        HttpStatus.CONFLICT,
-                        "User with name: %s already exists".formatted(username)));
-    }
-
-    /**
-     * Получение пользователя по имени пользователя
-     * <p>
-     * Нужен для Spring Security
-     *
-     * @return пользователь
-     */
     public UserDetailsService userDetailsService() {
         return this::getUserByUsername;
-
     }
 
+    public User getUserByUsername(String username) {
+        return this.userRepository.findByUsername(username).orElseThrow(
+                () -> new UserAlreadyExistException(
+                        HttpStatus.CONFLICT,
+                        "User with name: %s already exists".formatted(username))
+        );
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return this.userRepository.findByEmail(email).orElseThrow(
+                () -> new UserDoesNotExistException(
+                        HttpStatus.NOT_FOUND,
+                        "User does not exist with email = %s".formatted(email))
+        );
+    }
 
     @Override
     public ResponseEntity<Iterable<User>> getUsers() {

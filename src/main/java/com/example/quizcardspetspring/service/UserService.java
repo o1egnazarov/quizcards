@@ -4,6 +4,8 @@ import com.example.quizcardspetspring.entity.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import java.util.Optional;
+
 public interface UserService {
     ResponseEntity<Long> createUser(User user);
 
@@ -14,4 +16,6 @@ public interface UserService {
     ResponseEntity<User> deleteUserById(Long id);
 
     UserDetailsService userDetailsService();
+    User getUserByUsername(String username);
+    User getUserByEmail(String email);
 }

@@ -1,28 +1,41 @@
 package com.example.quizcardspetspring.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-@Data
+
 @Entity
 @Builder
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "t_user")
 public class User implements UserDetails {
     @Id
@@ -42,6 +55,15 @@ public class User implements UserDetails {
     @Email
     @NotBlank
     private String email;
+
+    @Column(name = "c_verification_code")
+    private String verificationCode;
+
+    @Column(name = "c_verification_expiration")
+    private LocalDateTime verificationCodeExpiresAt;
+
+    @Column(name = "c_is_enabled")
+    private boolean isEnabled;
 
     @Column(name = "c_date")
     private LocalDate date;
@@ -85,6 +107,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return isEnabled;
     }
 }

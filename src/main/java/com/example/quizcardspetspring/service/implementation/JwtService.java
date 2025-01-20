@@ -1,4 +1,4 @@
-package com.example.quizcardspetspring.service;
+package com.example.quizcardspetspring.service.implementation;
 
 import com.example.quizcardspetspring.entity.User;
 import io.jsonwebtoken.Claims;
@@ -19,7 +19,8 @@ import java.util.function.Function;
 public class JwtService {
     @Value("${token.signing.key}")
     private String jwtSigningKey;
-
+    @Value("${token.expiration}")
+    private long jwtExpirationInMs;
 
     /**
      * Генерация токена
@@ -34,26 +35,24 @@ public class JwtService {
             claims.put("email", customUserDetails.getEmail());
             claims.put("role", customUserDetails.getRole());
         }
-        return generateToken(claims, userDetails);
+        return buildToken(claims, userDetails);
     }
-
     /**
-     * Генерация токена
+     * Build токена
      *
      * @param extraClaims дополнительные данные
      * @param userDetails данные пользователя
      * @return токен
      */
-    private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+    private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder()
                 .claims(extraClaims)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 24 * 3600000))
+                .expiration(new Date(System.currentTimeMillis() + this.jwtExpirationInMs))
                 .signWith(getSigningKey())
                 .compact();
     }
-
     /**
      * Проверка токена на валидность
      *
@@ -62,8 +61,8 @@ public class JwtService {
      * @return true, если токен валиден
      */
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String userName = extractUserName(token);
-        return (userName.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        final String username = extractUsername(token);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
     /**
@@ -82,7 +81,7 @@ public class JwtService {
      * @param token токен
      * @return имя пользователя
      */
-    public String extractUserName(String token) {
+    public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -129,7 +128,7 @@ public class JwtService {
      * @return ключ
      */
     private SecretKey getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSigningKey);
+        byte[] keyBytes = Decoders.BASE64.decode(this.jwtSigningKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }
